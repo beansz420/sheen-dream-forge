@@ -1,0 +1,1 @@
+delete from public.orders where customer_email = 'teste.latencia@example.com';

@@ -1,0 +1,1 @@
+DELETE FROM public.orders WHERE transaction_id = 'txn_8329923e-8a40';

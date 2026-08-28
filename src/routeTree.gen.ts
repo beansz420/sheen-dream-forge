@@ -9,38 +9,101 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PedidoTransactionIdRouteImport } from './routes/pedido.$transactionId'
+import { Route as ApiOrderStatusRouteImport } from './routes/api/order-status'
+import { Route as ApiPublicPagapWebhookRouteImport } from './routes/api/public/pagap-webhook'
 
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PedidoTransactionIdRoute = PedidoTransactionIdRouteImport.update({
+  id: '/pedido/$transactionId',
+  path: '/pedido/$transactionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOrderStatusRoute = ApiOrderStatusRouteImport.update({
+  id: '/api/order-status',
+  path: '/api/order-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPagapWebhookRoute = ApiPublicPagapWebhookRouteImport.update({
+  id: '/api/public/pagap-webhook',
+  path: '/api/public/pagap-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/checkout': typeof CheckoutRoute
+  '/api/order-status': typeof ApiOrderStatusRoute
+  '/pedido/$transactionId': typeof PedidoTransactionIdRoute
+  '/api/public/pagap-webhook': typeof ApiPublicPagapWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/checkout': typeof CheckoutRoute
+  '/api/order-status': typeof ApiOrderStatusRoute
+  '/pedido/$transactionId': typeof PedidoTransactionIdRoute
+  '/api/public/pagap-webhook': typeof ApiPublicPagapWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/checkout': typeof CheckoutRoute
+  '/api/order-status': typeof ApiOrderStatusRoute
+  '/pedido/$transactionId': typeof PedidoTransactionIdRoute
+  '/api/public/pagap-webhook': typeof ApiPublicPagapWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/checkout'
+    | '/api/order-status'
+    | '/pedido/$transactionId'
+    | '/api/public/pagap-webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/checkout'
+    | '/api/order-status'
+    | '/pedido/$transactionId'
+    | '/api/public/pagap-webhook'
+  id:
+    | '__root__'
+    | '/'
+    | '/checkout'
+    | '/api/order-status'
+    | '/pedido/$transactionId'
+    | '/api/public/pagap-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CheckoutRoute: typeof CheckoutRoute
+  ApiOrderStatusRoute: typeof ApiOrderStatusRoute
+  PedidoTransactionIdRoute: typeof PedidoTransactionIdRoute
+  ApiPublicPagapWebhookRoute: typeof ApiPublicPagapWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +111,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pedido/$transactionId': {
+      id: '/pedido/$transactionId'
+      path: '/pedido/$transactionId'
+      fullPath: '/pedido/$transactionId'
+      preLoaderRoute: typeof PedidoTransactionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/order-status': {
+      id: '/api/order-status'
+      path: '/api/order-status'
+      fullPath: '/api/order-status'
+      preLoaderRoute: typeof ApiOrderStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/pagap-webhook': {
+      id: '/api/public/pagap-webhook'
+      path: '/api/public/pagap-webhook'
+      fullPath: '/api/public/pagap-webhook'
+      preLoaderRoute: typeof ApiPublicPagapWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CheckoutRoute: CheckoutRoute,
+  ApiOrderStatusRoute: ApiOrderStatusRoute,
+  PedidoTransactionIdRoute: PedidoTransactionIdRoute,
+  ApiPublicPagapWebhookRoute: ApiPublicPagapWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
