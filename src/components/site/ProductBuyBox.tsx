@@ -38,7 +38,9 @@ export function ProductBuyBox() {
 
       <button
         type="button"
-        onClick={() => open("2")}
+        onClick={() => {
+          document.getElementById("kits")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }}
         className="flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(22,95%,55%)] py-4 text-base font-extrabold uppercase tracking-wide text-white shadow-xl transition-transform hover:scale-[1.01] sm:py-5"
       >
         <ShoppingCart className="h-5 w-5" /> Quero o meu agora
