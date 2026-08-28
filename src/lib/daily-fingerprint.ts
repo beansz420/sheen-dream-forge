@@ -1,8 +1,8 @@
 /**
- * Daily HTML fingerprint.
+ * Rotating HTML fingerprint.
  *
- * Generates deterministic-but-rotating tokens that change once every 24h (UTC).
- * Because the value depends only on the current UTC day, server render and
+ * Generates deterministic-but-rotating tokens that change once every 12h (UTC).
+ * Because the value depends only on the current 12h UTC window, server render and
  * client hydration produce the same markup, so there is no hydration mismatch.
  *
  * The tokens are injected as extra class names / data attributes / comments so
@@ -10,10 +10,12 @@
  */
 
 export const DAY_MS = 24 * 60 * 60 * 1000;
+/** Rotation period: 12 hours. */
+export const PERIOD_MS = 12 * 60 * 60 * 1000;
 
-/** Index of the current UTC day (days since epoch). */
+/** Index of the current 12h UTC window (periods since epoch). */
 export function dayIndex(now: number = Date.now()) {
-  return Math.floor(now / DAY_MS);
+  return Math.floor(now / PERIOD_MS);
 }
 
 function hash(str: string) {
@@ -25,7 +27,7 @@ function hash(str: string) {
   return h >>> 0;
 }
 
-/** Stable-per-day token for a given key. Always starts with a letter. */
+/** Stable-per-12h token for a given key. Always starts with a letter. */
 export function fpToken(key: string, now?: number) {
   const h = hash(`${dayIndex(now)}::${key}`);
   const letters = "abcdefghijklmnopqrstuvwxyz";
@@ -42,7 +44,7 @@ export function fpAttrs(key: string, now?: number): Record<string, string> {
   return { [`data-${fpToken(`attr-${key}`, now)}`]: fpToken(`val-${key}`, now) };
 }
 
-/** Build id that rotates daily — useful for cache-busting and comments. */
+/** Build id that rotates every 12h — useful for cache-busting and comments. */
 export function fpBuildId(now?: number) {
   return `${dayIndex(now)}-${fpToken("build", now)}`;
 }
