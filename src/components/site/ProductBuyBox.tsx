@@ -1,11 +1,8 @@
 import { useEffect } from "react";
 import { ShoppingCart, Truck, Users, ShieldCheck, Award } from "lucide-react";
 import { trackWithMatching } from "@/lib/meta-pixel";
-import { useCheckout } from "@/components/checkout/CheckoutProvider";
 
 export function ProductBuyBox() {
-  const { open } = useCheckout();
-
   // Meta Pixel: ViewContent ao visualizar a página do produto
   useEffect(() => {
     void trackWithMatching("ViewContent", {
