@@ -9,30 +9,30 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PedidoTransactionIdRouteImport } from './routes/pedido.$transactionId'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ApiOrderStatusRouteImport } from './routes/api/order-status'
+import { Route as PedidoTransactionIdRouteImport } from './routes/pedido.$transactionId'
 import { Route as ApiPublicPagapWebhookRouteImport } from './routes/api/public/pagap-webhook'
 
-const CheckoutRoute = CheckoutRouteImport.update({
-  id: '/checkout',
-  path: '/checkout',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PedidoTransactionIdRoute = PedidoTransactionIdRouteImport.update({
-  id: '/pedido/$transactionId',
-  path: '/pedido/$transactionId',
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiOrderStatusRoute = ApiOrderStatusRouteImport.update({
   id: '/api/order-status',
   path: '/api/order-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidoTransactionIdRoute = PedidoTransactionIdRouteImport.update({
+  id: '/pedido/$transactionId',
+  path: '/pedido/$transactionId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicPagapWebhookRoute = ApiPublicPagapWebhookRouteImport.update({
@@ -97,13 +97,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/checkout': {
-      id: '/checkout'
-      path: '/checkout'
-      fullPath: '/checkout'
-      preLoaderRoute: typeof CheckoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -111,11 +104,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pedido/$transactionId': {
-      id: '/pedido/$transactionId'
-      path: '/pedido/$transactionId'
-      fullPath: '/pedido/$transactionId'
-      preLoaderRoute: typeof PedidoTransactionIdRouteImport
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/order-status': {
@@ -123,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/api/order-status'
       fullPath: '/api/order-status'
       preLoaderRoute: typeof ApiOrderStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedido/$transactionId': {
+      id: '/pedido/$transactionId'
+      path: '/pedido/$transactionId'
+      fullPath: '/pedido/$transactionId'
+      preLoaderRoute: typeof PedidoTransactionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/pagap-webhook': {
