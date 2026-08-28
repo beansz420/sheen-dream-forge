@@ -67,7 +67,7 @@ const kits: Kit[] = [
 
 export function KitsSection() {
   return (
-    <section className="mx-auto max-w-3xl px-4">
+    <section id="kits" className="mx-auto max-w-3xl px-4 scroll-mt-24">
       <div className="space-y-5">
         <div className="text-center">
           <h2 className="text-2xl font-extrabold uppercase tracking-wide md:text-3xl">Escolha o seu kit</h2>
