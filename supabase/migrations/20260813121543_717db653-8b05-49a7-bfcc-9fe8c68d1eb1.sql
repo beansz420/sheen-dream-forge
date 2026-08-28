@@ -1,0 +1,1 @@
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS fbclid text, ADD COLUMN IF NOT EXISTS event_source_url text;
