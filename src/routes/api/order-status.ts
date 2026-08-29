@@ -49,11 +49,21 @@ export const Route = createFileRoute("/api/order-status")({
             transaction_id: order.transaction_id!,
           }).catch((e) => console.error("[meta-capi] order-status fallback failed", e));
         } else {
-          // Varredura oportunista: recupera vendas antigas sem evento enviado.
-          const { sweepUnsentPurchases } = await import("@/lib/meta-capi.server");
-          await sweepUnsentPurchases(3).catch((e) =>
-            console.error("[meta-capi] sweep error", e),
-          );
+          // Varredura oportunista: confere pendentes na Pagap e recupera
+          // vendas antigas sem evento enviado (no máx. 1x por minuto).
+          if (Date.now() - lastSweepAt > 60_000) {
+            lastSweepAt = Date.now();
+            const [{ sweepUnsentPurchases }, { reconcilePendingOrders }] = await Promise.all([
+              import("@/lib/meta-capi.server"),
+              import("@/lib/pagap.server"),
+            ]);
+            await reconcilePendingOrders(10, 72).catch((e) =>
+              console.error("[pagap] reconcile error", e),
+            );
+            await sweepUnsentPurchases(3).catch((e) =>
+              console.error("[meta-capi] sweep error", e),
+            );
+          }
         }
 
 
