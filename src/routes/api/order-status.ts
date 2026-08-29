@@ -5,6 +5,8 @@ const OrderStatusQuerySchema = z.object({
   transaction_id: z.string().min(1).max(100),
 });
 
+let lastSweepAt = 0;
+
 export const Route = createFileRoute("/api/order-status")({
   server: {
     handlers: {
