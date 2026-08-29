@@ -21,6 +21,7 @@ export async function sendMetaCapiEvent(opts: {
   client_ip_address?: string;
   fbp?: string;
   fbc?: string;
+  event_time?: number;
 }) {
   const token = process.env.META_CAPI_ACCESS_TOKEN;
   if (!token) {
@@ -106,7 +107,7 @@ export async function sendMetaCapiEvent(opts: {
     data: [
       {
         event_name: opts.event_name,
-        event_time: Math.floor(Date.now() / 1000),
+        event_time: opts.event_time ?? Math.floor(Date.now() / 1000),
         event_id: opts.event_id,
         action_source: "website",
         event_source_url:

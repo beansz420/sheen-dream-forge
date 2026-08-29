@@ -14,6 +14,7 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ApiOrderStatusRouteImport } from './routes/api/order-status'
 import { Route as PedidoTransactionIdRouteImport } from './routes/pedido.$transactionId'
 import { Route as ApiPublicPagapWebhookRouteImport } from './routes/api/public/pagap-webhook'
+import { Route as ApiPublicReconcileOrdersRouteImport } from './routes/api/public/reconcile-orders'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,12 @@ const ApiPublicPagapWebhookRoute = ApiPublicPagapWebhookRouteImport.update({
   path: '/api/public/pagap-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicReconcileOrdersRoute =
+  ApiPublicReconcileOrdersRouteImport.update({
+    id: '/api/public/reconcile-orders',
+    path: '/api/public/reconcile-orders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +54,7 @@ export interface FileRoutesByFullPath {
   '/api/order-status': typeof ApiOrderStatusRoute
   '/pedido/$transactionId': typeof PedidoTransactionIdRoute
   '/api/public/pagap-webhook': typeof ApiPublicPagapWebhookRoute
+  '/api/public/reconcile-orders': typeof ApiPublicReconcileOrdersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +62,7 @@ export interface FileRoutesByTo {
   '/api/order-status': typeof ApiOrderStatusRoute
   '/pedido/$transactionId': typeof PedidoTransactionIdRoute
   '/api/public/pagap-webhook': typeof ApiPublicPagapWebhookRoute
+  '/api/public/reconcile-orders': typeof ApiPublicReconcileOrdersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,6 +71,7 @@ export interface FileRoutesById {
   '/api/order-status': typeof ApiOrderStatusRoute
   '/pedido/$transactionId': typeof PedidoTransactionIdRoute
   '/api/public/pagap-webhook': typeof ApiPublicPagapWebhookRoute
+  '/api/public/reconcile-orders': typeof ApiPublicReconcileOrdersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -71,6 +81,7 @@ export interface FileRouteTypes {
     | '/api/order-status'
     | '/pedido/$transactionId'
     | '/api/public/pagap-webhook'
+    | '/api/public/reconcile-orders'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -78,6 +89,7 @@ export interface FileRouteTypes {
     | '/api/order-status'
     | '/pedido/$transactionId'
     | '/api/public/pagap-webhook'
+    | '/api/public/reconcile-orders'
   id:
     | '__root__'
     | '/'
@@ -85,6 +97,7 @@ export interface FileRouteTypes {
     | '/api/order-status'
     | '/pedido/$transactionId'
     | '/api/public/pagap-webhook'
+    | '/api/public/reconcile-orders'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -93,6 +106,7 @@ export interface RootRouteChildren {
   ApiOrderStatusRoute: typeof ApiOrderStatusRoute
   PedidoTransactionIdRoute: typeof PedidoTransactionIdRoute
   ApiPublicPagapWebhookRoute: typeof ApiPublicPagapWebhookRoute
+  ApiPublicReconcileOrdersRoute: typeof ApiPublicReconcileOrdersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -132,6 +146,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPagapWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/reconcile-orders': {
+      id: '/api/public/reconcile-orders'
+      path: '/api/public/reconcile-orders'
+      fullPath: '/api/public/reconcile-orders'
+      preLoaderRoute: typeof ApiPublicReconcileOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -141,6 +162,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiOrderStatusRoute: ApiOrderStatusRoute,
   PedidoTransactionIdRoute: PedidoTransactionIdRoute,
   ApiPublicPagapWebhookRoute: ApiPublicPagapWebhookRoute,
+  ApiPublicReconcileOrdersRoute: ApiPublicReconcileOrdersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

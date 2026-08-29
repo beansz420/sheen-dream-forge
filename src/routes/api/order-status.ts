@@ -5,6 +5,8 @@ const OrderStatusQuerySchema = z.object({
   transaction_id: z.string().min(1).max(100),
 });
 
+let lastSweepAt = 0;
+
 export const Route = createFileRoute("/api/order-status")({
   server: {
     handlers: {
@@ -19,6 +21,14 @@ export const Route = createFileRoute("/api/order-status")({
         }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+        // Confere o status real na Pagap: não dependemos do webhook para
+        // marcar a venda como paga nem para disparar o Purchase no Meta.
+        const { syncOrderWithGateway } = await import("@/lib/pagap.server");
+        await syncOrderWithGateway(parsed.data.transaction_id).catch((e) =>
+          console.error("[pagap] sync error", e),
+        );
+
         const { data: order, error } = await supabaseAdmin
           .from("orders")
         .select(
@@ -41,11 +51,21 @@ export const Route = createFileRoute("/api/order-status")({
             transaction_id: order.transaction_id!,
           }).catch((e) => console.error("[meta-capi] order-status fallback failed", e));
         } else {
-          // Varredura oportunista: recupera vendas antigas sem evento enviado.
-          const { sweepUnsentPurchases } = await import("@/lib/meta-capi.server");
-          await sweepUnsentPurchases(3).catch((e) =>
-            console.error("[meta-capi] sweep error", e),
-          );
+          // Varredura oportunista: confere pendentes na Pagap e recupera
+          // vendas antigas sem evento enviado (no máx. 1x por minuto).
+          if (Date.now() - lastSweepAt > 60_000) {
+            lastSweepAt = Date.now();
+            const [{ sweepUnsentPurchases }, { reconcilePendingOrders }] = await Promise.all([
+              import("@/lib/meta-capi.server"),
+              import("@/lib/pagap.server"),
+            ]);
+            await reconcilePendingOrders(10, 72).catch((e) =>
+              console.error("[pagap] reconcile error", e),
+            );
+            await sweepUnsentPurchases(3).catch((e) =>
+              console.error("[meta-capi] sweep error", e),
+            );
+          }
         }
 
 
