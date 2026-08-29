@@ -19,6 +19,14 @@ export const Route = createFileRoute("/api/order-status")({
         }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+        // Confere o status real na Pagap: não dependemos do webhook para
+        // marcar a venda como paga nem para disparar o Purchase no Meta.
+        const { syncOrderWithGateway } = await import("@/lib/pagap.server");
+        await syncOrderWithGateway(parsed.data.transaction_id).catch((e) =>
+          console.error("[pagap] sync error", e),
+        );
+
         const { data: order, error } = await supabaseAdmin
           .from("orders")
         .select(
