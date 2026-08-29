@@ -107,7 +107,7 @@ export async function sendMetaCapiEvent(opts: {
     data: [
       {
         event_name: opts.event_name,
-        event_time: Math.floor(Date.now() / 1000),
+        event_time: opts.event_time ?? Math.floor(Date.now() / 1000),
         event_id: opts.event_id,
         action_source: "website",
         event_source_url:
