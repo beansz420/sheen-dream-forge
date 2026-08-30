@@ -18,6 +18,8 @@ type WebhookPayload = {
 // Conforme docs Pagap: event ∈ { pending, paid, refunded } (expired aceito por segurança)
 const ALLOWED = new Set(["pending", "paid", "expired", "refunded"]);
 const MAX_AGE_SECONDS = 300; // 5 min, conforme recomendação Pagap
+const ORDER_LOOKUP_ATTEMPTS = 12;
+const ORDER_LOOKUP_DELAY_MS = 500;
 
 function verifySignature(rawBody: string, signature: string, timestamp: string, secret: string) {
   try {
@@ -75,16 +77,34 @@ export const Route = createFileRoute("/api/public/pagap-webhook")({
           return new Response("ignored", { status: 200 });
         }
 
-        // Idempotência: se já está no mesmo status, não reprocessa (Pagap reenvia até 5x)
-        const { data: existing } = await supabaseAdmin
-          .from("orders")
-          .select("id, status, amount, capi_purchase_sent_at")
-          .eq("transaction_id", txId)
-          .maybeSingle();
+        // A Pagap pode enviar o webhook antes de a resposta de criação do Pix
+        // terminar e o transaction_id ser salvo. Aguarda essa pequena janela
+        // para não descartar justamente a confirmação do pagamento.
+        let existing: {
+          id: string;
+          status: string;
+          amount: number | string;
+          capi_purchase_sent_at: string | null;
+        } | null = null;
+
+        for (let attempt = 0; attempt < ORDER_LOOKUP_ATTEMPTS; attempt += 1) {
+          const { data } = await supabaseAdmin
+            .from("orders")
+            .select("id, status, amount, capi_purchase_sent_at")
+            .eq("transaction_id", txId)
+            .maybeSingle();
+          existing = data;
+          if (existing) break;
+          if (attempt < ORDER_LOOKUP_ATTEMPTS - 1) {
+            await new Promise((resolve) => setTimeout(resolve, ORDER_LOOKUP_DELAY_MS));
+          }
+        }
 
         if (!existing) {
-          console.error("[pagap-webhook] order not found", txId);
-          return new Response("ok", { status: 200 });
+          // Retorna erro para a Pagap tentar novamente, em vez de confirmar e
+          // perder definitivamente um evento que chegou cedo demais.
+          console.error("[pagap-webhook] order not found after retry", txId);
+          return new Response("order not ready", { status: 503 });
         }
 
         const isTest =
