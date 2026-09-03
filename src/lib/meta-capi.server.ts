@@ -32,7 +32,7 @@ export async function sendMetaCapiEvent(opts: {
   const { data: order } = await supabaseAdmin
     .from("orders")
     .select(
-      "id, amount, kit_id, customer_email, customer_phone, customer_name, customer_document, address_city, address_state, address_cep, fbp, fbc, fbclid, event_source_url, client_user_agent, client_ip_address, capi_attempts",
+      "id, amount, kit_id, customer_email, customer_phone, customer_name, customer_document, address_city, address_state, address_cep, fbp, fbc, fbclid, event_source_url, client_user_agent, client_ip_address, paid_at, capi_attempts",
     )
     .eq("transaction_id", opts.transaction_id)
     .maybeSingle();
@@ -107,7 +107,11 @@ export async function sendMetaCapiEvent(opts: {
     data: [
       {
         event_name: opts.event_name,
-        event_time: opts.event_time ?? Math.floor(Date.now() / 1000),
+        event_time:
+          opts.event_time ??
+          (opts.event_name === "Purchase" && order.paid_at
+            ? Math.floor(new Date(order.paid_at).getTime() / 1000)
+            : Math.floor(Date.now() / 1000)),
         event_id: opts.event_id,
         action_source: "website",
         event_source_url:
@@ -196,7 +200,7 @@ export async function sweepUnsentPurchases(limit = 5) {
     .is("capi_purchase_sent_at", null)
     .not("transaction_id", "is", null)
     .lt("paid_at", cutoff)
-    .gt("paid_at", new Date(Date.now() - 24 * 60 * 60_000).toISOString())
+    .gt("paid_at", new Date(Date.now() - 7 * 24 * 60 * 60_000).toISOString())
     .lt("capi_attempts", 6)
     .order("paid_at", { ascending: false })
     .limit(limit);
