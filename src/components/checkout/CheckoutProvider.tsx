@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, lazy, Suspense, type ReactNode } from "react";
 import type { KitId } from "@/lib/kits";
 import { KITS } from "@/lib/kits";
-import { trackWithMatching } from "@/lib/meta-pixel";
+import { trackDual } from "@/lib/meta-pixel";
 
 const CheckoutDialog = lazy(() =>
   import("./CheckoutDialog").then((m) => ({ default: m.CheckoutDialog })),
