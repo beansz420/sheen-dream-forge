@@ -255,8 +255,9 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
     icFired.current = true;
     void (async () => {
       await setMetaAdvancedMatching({ ...form });
-      fbqTrack(
+      await trackDual(
         "InitiateCheckout",
+        kit.id,
         {
           content_ids: [kit.id],
           contents: [{ id: kit.id, quantity: kit.quantity, item_price: kit.price }],
@@ -270,6 +271,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
         newCheckoutEventId(),
       );
     })();
+
   }, [form, kit]);
 
 
