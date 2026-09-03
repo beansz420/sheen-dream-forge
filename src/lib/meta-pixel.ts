@@ -300,3 +300,38 @@ export async function trackWithMatching(
   await ensureMetaAdvancedMatching();
   return fbqTrack(event, params, eventID);
 }
+
+/**
+ * Dispara o evento no Pixel E na Conversions API com o mesmo eventID.
+ * Recupera conversões perdidas por bloqueadores/iOS e melhora a
+ * qualidade da correspondência (IP + user agent vêm do servidor).
+ */
+export async function trackDual(
+  event: "ViewContent" | "AddToCart" | "InitiateCheckout",
+  kitId: "1" | "2" | "3" | "4",
+  params: Record<string, unknown>,
+  eventID?: string,
+) {
+  const id = eventID ?? generateEventId();
+  await ensureMetaAdvancedMatching();
+  fbqTrack(event, params, id);
+  try {
+    const { fbp, fbc } = ensureMetaBrowserIds();
+    const { trackFunnelEvent } = await import("./tracking.functions");
+    await trackFunnelEvent({
+      data: {
+        event_name: event,
+        event_id: id,
+        kit_id: kitId,
+        event_source_url:
+          typeof window !== "undefined" ? window.location.href.slice(0, 1000) : undefined,
+        fbp,
+        fbc,
+        matching: readStoredMatching(),
+      },
+    });
+  } catch {
+    // rastreio server-side é best-effort
+  }
+  return id;
+}
