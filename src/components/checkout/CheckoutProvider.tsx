@@ -44,7 +44,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
     // Ensure chunk is loaded before showing
     if (!primed) void import("./CheckoutDialog");
     const kit = KITS[k];
-    void trackWithMatching("AddToCart", {
+    void trackDual("AddToCart", kit.id, {
       content_ids: [kit.id],
       contents: [{ id: kit.id, quantity: kit.quantity, item_price: kit.price }],
       content_name: kit.name,
@@ -56,6 +56,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
     });
     setOpenKit(k);
   };
+
 
   return (
     <CheckoutCtx.Provider value={{ open: handleOpen }}>
