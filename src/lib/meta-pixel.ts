@@ -254,8 +254,9 @@ export async function setMetaAdvancedMatching(input: MetaAdvancedMatchingInput) 
     ["em", sha256(input.customer_email)],
     ["ph", sha256(phone)],
     ["fn", sha256(firstName)],
-    // Meta exige ln; com nome único, repete o primeiro nome (melhor que vazio).
-    ["ln", sha256(lastNameParts.join(" ") || firstName)],
+    // Meta: nunca duplicar dados. Sem sobrenome real, não envia ln.
+    ["ln", sha256(lastNameParts.join(" ") || undefined)],
+
     ["ct", sha256(input.address_city?.replace(/\s+/g, ""))],
     ["st", sha256(input.address_state)],
     ["zp", sha256(cleanDigits(input.address_cep))],
