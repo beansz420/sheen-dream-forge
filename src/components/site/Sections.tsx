@@ -120,7 +120,7 @@ export function Sections() {
       {/* Problems */}
       <section className="mx-auto max-w-5xl px-4">
         <h2 className="mb-10 text-center text-2xl font-extrabold leading-tight md:text-4xl">
-          Você sabia que <span className="text-primary">8 em cada 10 mulheres</span><br className="hidden md:block" />
+          Você sabia que <span className="text-primary">8 em cada 10 mulheres</span>{" "}<br className="hidden md:block" />
           convivem com manchas na pele?
         </h2>
         <div className="mx-auto max-w-2xl space-y-3">

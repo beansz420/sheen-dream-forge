@@ -6,6 +6,7 @@ import { ProductHeading } from "@/components/site/ProductHeading";
 import { ProductBuyBox } from "@/components/site/ProductBuyBox";
 import { Sections } from "@/components/site/Sections";
 import { Footer } from "@/components/site/Footer";
+import { StickyBuyBar } from "@/components/site/StickyBuyBar";
 import { CheckoutProvider } from "@/components/checkout/CheckoutProvider";
 import heroImg from "@/assets/gallery-clareador-tube.webp";
 import { fpAttrs, fpClass } from "@/lib/daily-fingerprint";
@@ -44,6 +45,7 @@ function Index() {
           <Sections />
         </main>
         <Footer />
+        <StickyBuyBar />
       </div>
     </CheckoutProvider>
   );

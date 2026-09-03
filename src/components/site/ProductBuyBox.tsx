@@ -1,20 +1,24 @@
 import { useEffect } from "react";
 import { ShoppingCart, Truck, Users, ShieldCheck, Award } from "lucide-react";
-import { trackWithMatching } from "@/lib/meta-pixel";
+import { trackDual } from "@/lib/meta-pixel";
+import { KITS } from "@/lib/kits";
 
 export function ProductBuyBox() {
-  // Meta Pixel: ViewContent ao visualizar a página do produto
+  // Meta Pixel + CAPI: ViewContent ao visualizar a página do produto.
+  // content_ids iguais aos de AddToCart/Purchase (exigência da Meta p/ catálogo).
   useEffect(() => {
-    void trackWithMatching("ViewContent", {
-      content_ids: ["clareador-dermico-cicatribem"],
-      contents: [{ id: "clareador-dermico-cicatribem", quantity: 1, item_price: 59.9 }],
-      content_name: "Clareador Dérmico Cicatribem",
+    const kit = KITS["1"];
+    void trackDual("ViewContent", kit.id, {
+      content_ids: [kit.id],
+      contents: [{ id: kit.id, quantity: kit.quantity, item_price: kit.price }],
+      content_name: kit.name,
       content_type: "product",
       content_category: "Clareador Dérmico",
       currency: "BRL",
-      value: 59.9,
+      value: kit.price,
     });
   }, []);
+
 
   return (
     <div className="space-y-3">

@@ -28,7 +28,7 @@ import { maskCPF, maskCEP, maskPhone, isValidCPF, lookupCepViaCep } from "@/lib/
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { createPixOrder } from "@/lib/checkout.functions";
 
-import { fbqTrack, getCheckoutEventId, newCheckoutEventId, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId, setMetaAdvancedMatching } from "@/lib/meta-pixel";
+import { fbqTrack, trackDual, getCheckoutEventId, newCheckoutEventId, getMetaBrowserIds, hasTrackedPurchase, markTrackedPurchase, purchaseEventId, setMetaAdvancedMatching } from "@/lib/meta-pixel";
 import { fetchOrderStatus } from "@/lib/order-status";
 import { getTracking } from "@/lib/tracking";
 
@@ -255,8 +255,9 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
     icFired.current = true;
     void (async () => {
       await setMetaAdvancedMatching({ ...form });
-      fbqTrack(
+      await trackDual(
         "InitiateCheckout",
+        kit.id,
         {
           content_ids: [kit.id],
           contents: [{ id: kit.id, quantity: kit.quantity, item_price: kit.price }],
@@ -270,6 +271,7 @@ function CheckoutForm({ kitId, onSuccess }: { kitId: KitId; onSuccess: (txId: st
         newCheckoutEventId(),
       );
     })();
+
   }, [form, kit]);
 
 
